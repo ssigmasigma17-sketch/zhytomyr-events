@@ -1,0 +1,4 @@
+name = "zhytomyr-events"
+main = "index.js"
+compatibility_date = "2025-01-01"
+# Channels, cities and window default to the values in index.js; override them here under [vars] if needed.
