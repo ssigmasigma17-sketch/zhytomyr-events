@@ -43,4 +43,10 @@ assert.equal(relevantText('🇲🇩 Реактивний дрон летить �
 assert.equal(relevantText('На Вінниччині в районі Козятина Реактивний\nМоже до нас тримати курс', places, true), 'На Вінниччині в районі Козятина Реактивний\nМоже до нас тримати курс');
 assert.equal(classify('Такий боєзаряд створено спеціально для знищення високовольтних опор', true), null);
 assert.equal(classify('Знищено 2 шахеди над Житомирщиною', true), 'pvo');
+// wording from the chat: direction without "шахед", smaller towns
+for (const [text, local] of [['З Києва летить на Коростень', true], ['З Київщини на Народичі', true], ['З Київщини летить на Олевськ', true],
+  ['1 шахед з Київщини на Народичі', false], ['БпЛА з Київщини курсом на Ємільчине', false], ['Реактив з Київщини на Озерне', false], ['Шахед над Високою Піччю', false], ['Над Високій Печі БпЛА', false]]) {
+  assert.equal(classify(relevantText(text, places, local), local), 'course', text);
+}
+assert.equal(classify('Сьогодні на Житомирщині тепло', true), null);
 console.log('ok');

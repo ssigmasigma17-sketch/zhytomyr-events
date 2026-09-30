@@ -5,11 +5,13 @@
 export const DEFAULT_CHANNELS = 'Angry_Pol,blacklist_public,truexazhitomir,pzhytomyr,PpoUARadar,mon1tor_ua,eRadarrua,deraketaua,monitor_ukr';
 // Channels that write only about Zhytomyr: every message counts, not only lines naming a place.
 export const DEFAULT_LOCAL = 'Angry_Pol,blacklist_public,truexazhitomir,pzhytomyr';
-export const DEFAULT_PLACES = 'Житомир,Бердич,Корост,Новоград-Волин,Звягел,Малин,Овруч,Радомишл,Баранівк,Андрушівк,Попільн,Чуднів,Черняхів,Брусилів,Ружин,Емільчин,Лугин,Полісс';
+export const DEFAULT_PLACES = 'Житомир,Бердич,Корост,Новоград-Волин,Звягел,Малин,Овруч,Радомишл,Баранівк,Андрушівк,Попільн,Чуднів,Черняхів,Брусилів,Ружин,Ємільчин,Емільчин,Лугин,Полісс,Олевськ,Народич,Хорошів,Пулин,Іршанськ,Любар,Романів,Потієвк,Вільськ,Довбиш,Ушомир,Словечн,Озерн,Гуйв,Новогуйвин,Висока Піч,Високій Печі,Високу Піч,Високою Піччю,Станишівк,Глибочиц,Кодн,Вчорайш,Миропіл,Курн,Боров,Чопович,Городниц,Ярунь,Рогачів,Піщів,Тетерів,Райгородок,Червоноармійськ,Володарськ-Волин,Коростишів,Горщик,Базар,Колодяжн,Високе,Оліїв,Новобориц';
 
+// "… на Народичі": direction to a capitalised place name, e.g. "З Київщини на Народичі".
+const TOWARDS = /(^|[\s,.:—-])(з|З|із|Із|зі|Зі|від|Від)\s+\S+(\s+\S+)?\s+(на|до|в бік|у бік)\s+[А-ЯІЇЄҐ]/u;
 const PVO = /працю\S*\s+ппо|ппо\s+працю|робот\S*\s+ппо|сил\S*\s+ппо|збит(?!к)|збили|знищен\S*\s+(\d|ціл|шахед|бпла|дрон|ракет)|мобільн\S*\s+(вогнев\S*\s+)?груп/i;
 const HIT = /приліт|прилет|влучан|вибух|удар(?!н)|уражен|пошкодж|руйнуван|пожеж|загинул|постражда/i;
-const COURSE = /шахед|шахєд|бпла|дрон|ракет|курс|напрям|крилат|балістик|герань|гербера|калібр|реактив/i;
+const COURSE = /шахед|шахєд|бпла|дрон|ракет|курс|напрям|крилат|балістик|герань|гербера|калібр|реактив|лет(ить|ять|ит)|рухаєт|в бік|у бік|заходит|залітає|повз|над /i;
 // Local channels also repost news about other regions; skip those unless they also name our area.
 const ELSEWHERE = /київщин|вінниччин|хмельниччин|рівненщин|чернігівщин|волин|молдов|кишин|польщ|білорус|харків|одес|дніпр|запоріж|львів/i;
 const OURS = /до нас|по нас|область|області/i;
@@ -86,7 +88,7 @@ export function classify(text, local) {
   if (!text) return null;
   if (PVO.test(text)) return 'pvo';
   if (HIT.test(text)) return 'hit';
-  if (COURSE.test(text) || !local) return 'course';
+  if (COURSE.test(text) || TOWARDS.test(text) || !local) return 'course';
   return null;
 }
 
