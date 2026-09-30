@@ -7,9 +7,12 @@ export const DEFAULT_CHANNELS = 'Angry_Pol,blacklist_public,truexazhitomir,pzhyt
 export const DEFAULT_LOCAL = 'Angry_Pol,blacklist_public,truexazhitomir,pzhytomyr';
 export const DEFAULT_PLACES = 'Житомир,Бердич,Корост,Новоград-Волин,Звягел,Малин,Овруч,Радомишл,Баранівк,Андрушівк,Попільн,Чуднів,Черняхів,Брусилів,Ружин,Емільчин,Лугин,Полісс';
 
-const PVO = /працю\S*\s+ппо|ппо\s+працю|робот\S*\s+ппо|сил\S*\s+ппо|збит(?!к)|збили|знищен|мобільн\S*\s+(вогнев\S*\s+)?груп/i;
+const PVO = /працю\S*\s+ппо|ппо\s+працю|робот\S*\s+ппо|сил\S*\s+ппо|збит(?!к)|збили|знищен\S*\s+(\d|ціл|шахед|бпла|дрон|ракет)|мобільн\S*\s+(вогнев\S*\s+)?груп/i;
 const HIT = /приліт|прилет|влучан|вибух|удар(?!н)|уражен|пошкодж|руйнуван|пожеж|загинул|постражда/i;
 const COURSE = /шахед|шахєд|бпла|дрон|ракет|курс|напрям|крилат|балістик|герань|гербера|калібр|реактив/i;
+// Local channels also repost news about other regions; skip those unless they also name our area.
+const ELSEWHERE = /київщин|вінниччин|хмельниччин|рівненщин|чернігівщин|волин|молдов|кишин|польщ|білорус|харків|одес|дніпр|запоріж|львів/i;
+const OURS = /до нас|по нас|область|області/i;
 const SIGNATURE = /надіслати новину|підписати|підписатись|підписуйтесь|@\w{4,}|t\.me\//i;
 
 const decode = s => s
@@ -33,7 +36,10 @@ const mentions = (text, places) => { const low = text.toLowerCase(); return plac
 // Drops channel signatures; for country-wide channels keeps only the lines / items about our places.
 export function relevantText(text, places, local) {
   const lines = text.split(/\n+/).map(s => s.trim()).filter(s => s && !SIGNATURE.test(s));
-  if (local) return lines.join('\n');
+  if (local) {
+    const text = lines.join('\n');
+    return ELSEWHERE.test(text) && !mentions(text, places) && !OURS.test(text) ? '' : text;
+  }
   return lines.flatMap(l => l.split(/;\s*/)).filter(s => mentions(s, places)).join('\n');
 }
 

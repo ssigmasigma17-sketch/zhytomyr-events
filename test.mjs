@@ -38,4 +38,9 @@ assert.equal(classify('Вибухи! Сидимо в укриттях.', true), 
 assert.equal(classify('Реактивний БпЛА в бік Радомишля!', true), 'course');
 assert.equal(classify('8800 дерев — 33 млн грн збитків: на Житомирщині викрили лісорубів', true), null);
 assert.equal(classify('Ударні БпЛА курсом на Житомир', true), 'course');
+// local channel posts about other places
+assert.equal(relevantText('🇲🇩 Реактивний дрон летить у напрямку столиці Молдови, незабаром буде над Кишиневом', places, true), '');
+assert.equal(relevantText('На Вінниччині в районі Козятина Реактивний\nМоже до нас тримати курс', places, true), 'На Вінниччині в районі Козятина Реактивний\nМоже до нас тримати курс');
+assert.equal(classify('Такий боєзаряд створено спеціально для знищення високовольтних опор', true), null);
+assert.equal(classify('Знищено 2 шахеди над Житомирщиною', true), 'pvo');
 console.log('ok');
